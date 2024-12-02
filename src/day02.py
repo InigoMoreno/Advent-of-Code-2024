@@ -13,7 +13,7 @@ class Day02(Day):
 
     def is_safe(self, level):
         diff = np.diff(level)
-        return (np.all(diff > 0) or np.all(diff < 0)) and np.all(abs(diff) <= 3)
+        return all((d > 0 and d <= 3) for d in diff) or all((d < 0 and d >= -3) for d in diff)
 
     def part1(self):
         return sum(self.is_safe(level) for level in self.input)
