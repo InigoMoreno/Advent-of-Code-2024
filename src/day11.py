@@ -2,12 +2,10 @@
 from utils import Day
 import functools
 
-calls = 0
 
 
 @functools.cache
 def blink(N, times):
-    global calls
     calls += 1
     if times == 0:
         return 1
@@ -33,13 +31,11 @@ class Day11(Day):
     def part1(self):
         result = sum(blink(stone, 25) for stone in self.stones)
         print(blink.cache_info())
-        print(calls)
         return result
 
     def part2(self):
         result = sum(blink(stone, 75) for stone in self.stones)
         print(blink.cache_info())
-        print(calls)
         return result
 
 
