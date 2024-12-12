@@ -6,10 +6,6 @@ from queue import Queue
 neighbors = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
 
-def tuple_sum(t1, t2, factor=1):
-    return tuple((a + b * factor) for a, b in zip(t1, t2))
-
-
 class Day12(Day):
     def __init__(self):
         super().__init__("12")
@@ -34,7 +30,7 @@ class Day12(Day):
                 while not q.empty():
                     pos = q.get()
                     for n in neighbors:
-                        new_pos = tuple_sum(pos, n)
+                        new_pos = tuple((a + b for a, b in zip(pos, n)))
                         if new_pos in visited:
                             continue
                         if self.field[new_pos] == f:
@@ -43,7 +39,7 @@ class Day12(Day):
                         else:
                             # 1/4 so that we can distinguish between AB and BA borders
                             # not important for part1 but it is for part2
-                            border.add(tuple_sum(pos, n, 0.25))
+                            border.add(tuple((a + b/4 for a, b in zip(pos, n))))
                 total += len(visited) * len(border)
                 self.part1_borders.append((len(visited), border))
                 to_visit -= visited
@@ -65,7 +61,7 @@ class Day12(Day):
                     else:
                         neighbors2 = [(0, 1), (0, -1)]
                     for n2 in neighbors2:
-                        new_pos2 = tuple(np.array(pos) + np.array(n2))
+                        new_pos2 = tuple((a + b for a, b in zip(pos, n2)))
                         if new_pos2 in border:
                             border.remove(new_pos2)
                             q2.put(new_pos2)
