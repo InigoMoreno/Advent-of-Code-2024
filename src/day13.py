@@ -1,6 +1,12 @@
 #!/bin/env python3
 from utils import Day
 import math
+import numpy as np
+
+
+def close_to_int(a, sigma=1e-8):
+    remainder = math.modf(a + .5)[0] - .5
+    return abs(remainder) < sigma
 
 
 class Day13(Day):
@@ -17,19 +23,11 @@ class Day13(Day):
         ]
 
     def solve(self, ax, ay, bx, by, x, y):
-        smallest_tokens = math.inf
-        for Na in range(0, x // ax + 1):
-            Nbx, modx = divmod(x - ax * Na, bx)
-            if modx != 0:
-                continue
-            Nby, mody = divmod(y - ay * Na, by)
-            if mody != 0 or Nbx != Nby:
-                continue
-            tokens = Na * 3 + Nbx
-            if tokens < smallest_tokens:
-                smallest_tokens = tokens
-        if smallest_tokens < math.inf:
-            return smallest_tokens
+        A = np.matrix([[ax, bx], [ay, by]])
+        B = np.matrix([[x], [y]])
+        Na, Nb = np.linalg.solve(A, B).flat
+        if close_to_int(Na) and close_to_int(Nb):
+            return round(Na * 3 + Nb)
         return 0
 
     def part1(self):
