@@ -18,7 +18,7 @@ if [[ ! -f "input/day${DAY_PADDED}/input.txt" ]]; then
 fi
 
 if [[ ! -f "input/day${DAY_PADDED}/example.txt" ]]; then
-    curl --silent "https://adventofcode.com/${YEAR}/day/${DAY}" | sed -e "s|<em>||" | sed -e "s|</em>||" | xmllint --html --xpath "(//p[contains(., 'example')])[1]/following-sibling::pre[1]/code/text()" - >"input/day${DAY_PADDED}/example.txt"
+    curl --silent "https://adventofcode.com/${YEAR}/day/${DAY}" | sed -e "s|<em>||" | sed -e "s|</em>||" | xmllint --html --xpath "(//p[contains(., 'example')])[1]/following-sibling::pre[1]/code/text()" - | perl -MHTML::Entities -pe 'decode_entities($_);' >"input/day${DAY_PADDED}/example.txt"
 fi
 
 code "src/day${DAY_PADDED}.py"
