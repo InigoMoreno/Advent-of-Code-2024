@@ -41,13 +41,72 @@ class Day15(Day):
             if box_moved:
                 grid[next_pos], grid[pos + direction] = grid[pos + direction], grid[next_pos]
             pos = pos + direction
-        total = 0
-        for box in np.argwhere(grid == 'O'):
-            total += box[0] * 100 + box[1]
-        return total
+        return sum(box[0] * 100 + box[1] for box in np.argwhere(grid == 'O'))
+
+    def show(self, grid, pos, pos2=None):
+        grid2 = grid.copy()
+        grid2[pos] = '@'
+        if pos2:
+            grid2[pos2] = 'W'
+        print('\n'.join([''.join(line) for line in grid2]))
+
+    def pushable(self, grid, pos, direction):
+        if grid[pos] == '#':
+            return False
+        if grid[pos] == '.':
+            return True
+        if direction[0] == 0:
+            return self.pushable(grid, pos + direction + direction, direction)
+        else:
+            if grid[pos] == '[':
+                other_pos = pos + Pos((0, 1))
+            elif grid[pos] == ']':
+                other_pos = pos + Pos((0, -1))
+            else:
+                return True
+            return self.pushable(grid, pos + direction, direction) and self.pushable(grid, other_pos + direction, direction)
+
+    def push(self, grid, pos, direction):
+        if grid[pos] == '#':
+            return False
+        if grid[pos] == '.':
+            return True
+        if direction[0] == 0:
+            # self.show(grid, pos)
+            self.push(grid, pos + direction + direction, direction)
+            grid[pos], grid[pos + direction], grid[pos + direction + direction] = grid[pos + direction + direction], grid[pos], grid[pos + direction]
+        else:
+            if grid[pos] == '[':
+                other_pos = pos + Pos((0, 1))
+            elif grid[pos] == ']':
+                other_pos = pos + Pos((0, -1))
+            else:
+                return True
+            self.push(grid, pos + direction, direction)
+            self.push(grid, other_pos + direction, direction)
+            grid[pos], grid[pos + direction] = grid[pos + direction], grid[pos]
+            grid[other_pos], grid[other_pos + direction] = grid[other_pos + direction], grid[other_pos]
+            # self.show(grid, pos)
 
     def part2(self):
-        return None
+        duplicator = {
+            '#': '##',
+            'O': '[]',
+            '.': '..',
+        }
+        grid = np.array([list(''.join([duplicator[c] for c in line])) for line in self.grid])
+        pos = Pos((self.initial_position[0], self.initial_position[1] * 2))
+        # print('Initial state:')
+        # self.show(grid, pos)
+        for movement in self.movements:
+            direction = directions[movement]
+            # print(f'\nMovement {movement}:')
+            pusheable = self.pushable(grid, pos + direction, direction)
+            if pusheable:
+                self.push(grid, pos + direction, direction)
+                pos += direction
+            # self.show(grid, pos)
+        return sum(box[0] * 100 + box[1] for box in np.argwhere(grid == '['))
 
 
 if __name__ == '__main__':
