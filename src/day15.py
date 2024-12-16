@@ -28,20 +28,21 @@ class Day15(Day):
 
     def part1(self):
         pos = self.initial_position
+        grid = self.grid.copy()
         for movement in self.movements:
             direction = directions[movement]
             next_pos = pos + direction
             box_moved = False
-            while self.grid[next_pos] == 'O':
+            while grid[next_pos] == 'O':
                 box_moved = True
                 next_pos += direction
-            if self.grid[next_pos] == '#':
+            if grid[next_pos] == '#':
                 continue
             if box_moved:
-                self.grid[next_pos], self.grid[pos + direction] = self.grid[pos + direction], self.grid[next_pos]
+                grid[next_pos], grid[pos + direction] = grid[pos + direction], grid[next_pos]
             pos = pos + direction
         total = 0
-        for box in np.argwhere(self.grid == 'O'):
+        for box in np.argwhere(grid == 'O'):
             total += box[0] * 100 + box[1]
         return total
 
