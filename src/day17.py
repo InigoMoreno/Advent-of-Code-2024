@@ -32,7 +32,7 @@ class Day17(Day):
                     pointer += 2
                 case [1, op, *_]:
                     # print(f"bxl {op}")
-                    registers[B] |= op
+                    registers[B] ^= op
                     pointer += 2
                 case [2, op, *_]:
                     # print(f"bst {op}")
@@ -46,7 +46,7 @@ class Day17(Day):
                         pointer += 2
                 case [4, *_]:
                     # print(f"bxc {op}")
-                    registers[B] |= registers[C]
+                    registers[B] ^= registers[C]
                     pointer += 2
                 case [5, op, *_]:
                     # print(f"out {op}")
@@ -62,6 +62,7 @@ class Day17(Day):
                     pointer += 2
                 case _:
                     break
+        self.log(registers, output)
         return output[:-1]
 
     def part2(self):
