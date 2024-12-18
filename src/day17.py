@@ -130,55 +130,26 @@ class Day17(Day):
 
     def part2(self):
         # self.part1_sym()
-        # using sympy we found that output[i] only depends on A//8**i so we can
-        # change the lower bits without changing the output in higher bits
-        A_bits = np.ones_like(self.program)
-        for i, p in list(enumerate(self.program))[::-1]:
-            found = False
-            for b in range(800000):
-                A_bits[i] = b
-                res = self.part1(A_value=sum(A_bits[i] * 8**i for i in range(len(self.program))))
-                # print(f"{b=} {res=}")
-                if len(res.split(',')) <= i:
-                    continue
-                # print(len(res.split(',')), i)
-                if all(a == b for a, b in zip(list(map(int, res.split(',')))[i:], self.program[i:])):
-                    found = True
-                    break
-                # if int(res.split(',')[i]) == p:
-                #     # print('found')
-                #     found = True
-                #     break
-            assert found
-            print(A_bits)
-            A = sum(A_bits[i] * 8**i for i in range(len(self.program)))
-            A_bits = np.array([(A // 8**i) % 8 for i in range(len(self.program))])
-            print(A_bits)
-            print(','.join(map(str, self.program)))
-            print(self.part1(A_value=sum(A_bits[i] * 8**i for i in range(len(self.program)))))
-            print('----')
+        # using sympy we found that output[i] only depends on A//8**i so
+        # so the ouptut of A*8 should be the same as A plus one more byte at the begining
 
-        # low_place = 0
-        # high_place = 3
-        # outputslow = np.zeros((8, 8), dtype=int)
-        # outputshigh = np.zeros((8, 8), dtype=int)
-        # A_bits = [random.randint(0, 7) for _ in range(16)]
-        # for bithigh in range(8):
-        #     for bitlow in range(8):
-        #         A_bits_copy = A_bits.copy()
-        #         A_bits_copy[high_place] = bithigh
-        #         A_bits_copy[low_place] = bitlow
-        #         A = sum(A_bits_copy[i] * 8**i for i in range(16))
-        #         res = self.part1(A)
+        # A = random.randint(8**15, 8**16)
+        # print(self.part1(A))
+        # print(self.part1(A * 8))
 
-        #         print(f"{bitlow=} {bithigh=} {A=} {res}")
-        #         outputslow[bitlow, bithigh] = int(res.split(',')[low_place])
-        #         outputshigh[bitlow, bithigh] = int(res.split(',')[high_place])
-        # print(outputslow)
-        # print(outputshigh)
+        possibilites = set((0,))
+        for p in self.program[::-1]:
+            new_possibilites = set()
+            for A in possibilites:
+                for b in range(8):
+                    res = self.part1(A * 8 + b)
+                    if int(res.split(',')[0]) == p:
+                        new_possibilites.add(A * 8 + b)
+            possibilites = new_possibilites
 
+        A = min(possibilites)
+        return A
 
-#  mod(xor(xor(xor(mod(A, 8), 5), 6), floor(A/pow(2, xor(mod(A, 8), 5)))), 8) == 0
 
 if __name__ == '__main__':
     Day17().main(example=False)
